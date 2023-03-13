@@ -33,9 +33,8 @@
 #  POSSIBILITY OF SUCH DAMAGE.
 #
 # Author: Benjamin Narin
+# Author: William Baker
 
-import roslib
-roslib.load_manifest('laser_to_image')
 import numpy as np, cv2
 import math
 import rospy
@@ -54,9 +53,9 @@ image_size = int(max_lidar_range*2*disc_factor)
 class laser_to_image:
 	def __init__(self):
 		# Laser Scan To Subscribe to
-		self.joy_sub = rospy.Subscriber('/scan_multi',LaserScan,self.cloud_to_image_callback)
+		self.joy_sub = rospy.Subscriber('/scan',LaserScan,self.cloud_to_image_callback)
 		# Publisher for Image
-		self.pub = rospy.Publisher("scan_to_image",Image, queue_size = 10)
+		self.pub = rospy.Publisher("/scan/image",Image, queue_size = 10)
 		# CvBridge Setup
 		self.bridge = CvBridge()
 
@@ -96,7 +95,7 @@ class laser_to_image:
 				pix_x = int(math.floor((pt_x + max_lidar_range) * disc_factor))
 				pix_y = int(math.floor((max_lidar_range - pt_y) * disc_factor))
 				if (pix_x > image_size) or (pix_y > image_size):
-					print "Error"
+					print(f"Error at [{pix_x}, {pix_y}]")
 				else:
 					blank_image[pix_y,pix_x] = [0,0,255]
 
